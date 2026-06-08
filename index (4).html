@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Haley — a field journal</title>
+
+<!--
+  ============================================================
+  HOW THIS SITE WORKS  (read me first)
+  ============================================================
+  ONE file. To go live: upload it to Netlify or Vercel.
+
+  IMAGES: make a folder named "images" right next to this file
+  and put your photos in it. Then point to them like
+  images/yourphoto.jpg in the spots marked below. Empty spots
+  show a dashed box telling you exactly what filename to use.
+
+  EDIT POINTS (search the file for these):
+   - "YOUR NAME"        the handwritten name
+   - "YOUR NAV FLOWERS" the blooms and where they sit
+   - "YOUR WRITING"     blog posts
+   - "WORLDLY..."       short observations
+   - "GET TO KNOW ME"   your bio + email
+   - "FRIENDS PASSWORD" change the friends password
+   - "EDIT ME"          colors and fonts (top of CSS)
+  ============================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Caveat:wght@600;700&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============== EDIT ME — COLORS / FONTS ============== */
+:root{
+  --soil:#1b1610; --soil-2:#241c14; --bark:#3a2c20;
+  --moss:#7d8a55; --sage:#a7b27e;
+  --terracotta:#c06a44; --clay:#d8a05f; --bloom-dk:#9a4e30;
+  --velvet:#7d2a2d; --velvet-dk:#531a1d;
+  --gold:#e0aa46; --cream:#efe6d6; --muted:#b1a48d;
+  --display:"Bricolage Grotesque",sans-serif;
+  --hand:"Caveat",cursive;
+  --body:"Hanken Grotesk",sans-serif;
+}
+*{ box-sizing:border-box; margin:0; padding:0; }
+html{ scroll-behavior:smooth; }
+body{
+  font-family:var(--body);
+  background:
+    radial-gradient(1100px 760px at 50% -8%, #34201c 0%, transparent 58%),
+    radial-gradient(900px 700px at 50% 118%, #241b12 0%, transparent 55%),
+    var(--soil);
+  color:var(--cream); min-height:100vh; overflow-x:hidden; -webkit-font-smoothing:antialiased;
+}
+body::after{ content:""; position:fixed; inset:0; pointer-events:none; z-index:9999;
+  opacity:.05; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+a{ color:var(--terracotta); text-decoration:none; } a:hover{ color:var(--clay); }
+
+.view{ display:none; } .view.active{ display:block; }
+.view.active .page{ animation:rise .7s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes rise{ from{opacity:0; transform:translateY(28px);} to{opacity:1; transform:translateY(0);} }
+@keyframes fadeIn{ to{ opacity:1; } }
+
+/* ============== HOME ============== */
+#home{ min-height:100vh; position:relative; overflow:hidden; }
+.garden{ min-height:100vh; display:flex; align-items:center; justify-content:center; position:relative; }
+.vines{ position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+.vine{ fill:none; stroke:var(--moss); stroke-width:4.5; stroke-linecap:round; stroke-dasharray:1; stroke-dashoffset:1; }
+.vine.v2{ stroke:var(--sage); } .vine.v3{ stroke:#5f6b3f; }
+.anim .vine{ animation:grow 1.4s ease forwards; }
+@keyframes grow{ to{ stroke-dashoffset:0; } }
+.vleaf{ fill:var(--moss); opacity:0; transform-box:fill-box; transform-origin:center; }
+.vleaf.s{ fill:var(--sage); } .vleaf.d{ fill:#5f6b3f; }
+.anim .vleaf{ animation:leafPop .5s ease forwards; }
+@keyframes leafPop{ from{opacity:0; transform:scale(0);} to{opacity:.92; transform:scale(1);} }
+.vbud{ fill:var(--velvet); opacity:0; }
+.anim .vbud{ animation:fadeIn .6s ease forwards; }
+
+.ring{ position:relative; width:min(620px,94vw); height:min(560px,86vh); z-index:1; }
+.ring-vines{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; z-index:0; pointer-events:none; }
+.stem{ fill:none; stroke:var(--moss); stroke-width:3; stroke-linecap:round; vector-effect:non-scaling-stroke;
+  stroke-dasharray:1; stroke-dashoffset:1; }
+.anim .stem{ animation:grow .7s ease forwards; }
+.stem-leaf{ fill:var(--sage); opacity:0; }
+.anim .stem-leaf{ animation:leafPop .4s ease forwards; }
+.name{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center;
+  white-space:nowrap; color:#fff; font-family:var(--hand); line-height:1.05;
+  padding:.06em .45em .2em .06em; max-width:96vw; z-index:1; }
+.anim .name{ animation:write 1.5s steps(64,end) 1.8s both; }
+@keyframes write{ from{ -webkit-clip-path:inset(-12% 100% -22% 0); clip-path:inset(-12% 100% -22% 0); }
+                  to  { -webkit-clip-path:inset(-12% -16% -22% 0);  clip-path:inset(-12% -16% -22% 0); } }
+.name .pre{ display:block; font-size:clamp(18px,3.6vw,30px); opacity:.85; }
+.name .main{ display:block; font-size:clamp(52px,12vw,104px); font-weight:700; text-shadow:0 2px 24px rgba(0,0,0,.5); }
+
+.bud-link{ position:absolute; transform:translate(-50%,-50%); background:none; border:none; cursor:pointer;
+  padding:0; display:flex; flex-direction:column; align-items:center; gap:6px; opacity:0; z-index:2; }
+.anim .bud-link{ animation:budIn .7s cubic-bezier(.2,.9,.3,1.3) forwards; }
+@keyframes budIn{ 0%{opacity:0; transform:translate(-50%,-50%) scale(0);}
+  70%{opacity:1; transform:translate(-50%,-50%) scale(1.12);} 100%{opacity:1; transform:translate(-50%,-50%) scale(1);} }
+.bud-wrap{ position:relative; }
+.bud{ width:clamp(60px,11vw,84px); height:clamp(60px,11vw,84px); transition:transform .3s ease; display:block; }
+.bud-link:hover .bud{ transform:rotate(18deg) scale(1.12); }
+.lock-badge{ position:absolute; right:-2px; bottom:-2px; width:24px; height:24px; background:var(--soil);
+  border-radius:50%; display:flex; align-items:center; justify-content:center; }
+.lock-badge svg{ width:13px; height:13px; }
+.bud-link span{ font-family:var(--display); font-weight:600; color:var(--cream);
+  font-size:clamp(12px,1.5vw,15px); letter-spacing:.01em; transition:color .25s ease; max-width:120px; text-align:center; line-height:1.15; }
+.bud-link:hover span{ color:var(--clay); }
+.enter-hint{ position:absolute; bottom:22px; left:50%; transform:translateX(-50%); color:var(--muted);
+  font-size:12px; letter-spacing:.16em; text-transform:uppercase; opacity:0; z-index:1; }
+.anim .enter-hint{ animation:fadeIn 1s ease 3.8s forwards; }
+
+.petal-particle{ position:fixed; width:14px; height:20px; border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+  z-index:9998; pointer-events:none; transform:translate(-50%,-50%); }
+
+/* ============== SECTION PAGES ============== */
+.page{ max-width:780px; margin:0 auto; padding:40px 24px 100px; }
+.topbar{ display:flex; align-items:center; padding:18px 24px; max-width:780px; margin:0 auto; }
+.back{ display:inline-flex; align-items:center; gap:9px; font-family:var(--display); font-weight:600;
+  font-size:15px; color:var(--cream); cursor:pointer; background:none; border:none; }
+.back svg{ width:22px; height:22px; transition:transform .3s ease; }
+.back:hover svg{ transform:rotate(-30deg); } .back:hover{ color:var(--clay); }
+
+.kicker{ font-family:var(--hand); font-size:24px; color:var(--clay); }
+.page h1{ font-family:var(--display); font-weight:800; font-size:clamp(38px,7vw,64px);
+  line-height:.98; letter-spacing:-.02em; color:var(--cream); margin-top:2px; }
+.page .lead{ color:var(--muted); font-size:18px; margin-top:16px; max-width:56ch; line-height:1.6; }
+.sprout{ width:40px; height:auto; margin:26px 0 4px; display:block; }
+
+/* writing: editorial index */
+.entry{ display:grid; grid-template-columns:auto 1fr; gap:24px; padding:34px 0; align-items:start; }
+.entry + .entry{ border-top:1px solid var(--bark); }
+.entry-no{ font-family:var(--display); font-weight:800; font-size:clamp(32px,5vw,56px);
+  color:rgba(239,230,214,.13); line-height:.9; }
+.entry-kicker{ font-family:var(--hand); font-size:21px; color:var(--clay); }
+.entry-kicker b{ color:var(--moss); font-weight:600; }
+.entry h2{ font-family:var(--display); font-weight:600; font-size:clamp(22px,3.6vw,32px);
+  line-height:1.1; color:var(--cream); margin-top:4px; transition:color .25s ease; }
+.entry:hover h2{ color:var(--clay); }
+.entry p{ color:var(--muted); margin-top:12px; line-height:1.75; max-width:60ch; }
+.more{ display:inline-block; margin-top:14px; font-weight:600; font-size:14px; }
+@media(max-width:560px){ .entry{ grid-template-columns:1fr; gap:6px; } .entry-no{ font-size:30px; } }
+
+/* observations: notebook */
+.note{ position:relative; padding:20px 0 24px 24px; border-left:2px solid var(--moss); }
+.note::before{ content:""; position:absolute; left:-8px; top:26px; width:13px; height:13px;
+  border-radius:50%; background:var(--velvet); border:2px solid var(--soil); }
+.note-date{ font-family:var(--hand); font-size:20px; color:var(--sage); }
+.note-date b{ color:var(--muted); font-family:var(--body); font-size:11px; font-weight:600;
+  letter-spacing:.14em; text-transform:uppercase; margin-left:8px; }
+.note h3{ font-family:var(--display); font-weight:600; font-size:21px; color:var(--cream); margin-top:2px; }
+.note p{ color:var(--muted); margin-top:8px; line-height:1.7; max-width:58ch; }
+
+/* get to know me */
+.about-wrap{ display:grid; grid-template-columns:.85fr 1.15fr; gap:36px; align-items:start; }
+@media(max-width:640px){ .about-wrap{ grid-template-columns:1fr; } }
+.about-wrap .hi{ font-family:var(--hand); font-size:30px; color:var(--clay); }
+.about-wrap p{ color:var(--cream); line-height:1.85; font-size:17px; margin-top:16px; }
+.sig{ font-family:var(--hand); font-size:40px; color:var(--cream); margin-top:18px; }
+.mail{ display:inline-flex; align-items:center; gap:10px; margin-top:24px; padding:14px 20px;
+  border:1px solid var(--bark); border-radius:14px; background:var(--soil-2); font-size:16px; }
+.mail svg{ width:20px; height:20px; }
+.mail a{ font-weight:600; }
+
+/* images */
+.img-ph{ border:1.5px dashed var(--bark); border-radius:16px; background:var(--soil-2); min-height:160px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; color:var(--muted);
+  padding:18px; text-align:center; }
+.img-ph svg{ width:30px; height:30px; opacity:.55; }
+.img-ph code{ color:var(--clay); font-size:13px; word-break:break-all; }
+.img-wrap{ border-radius:16px; overflow:hidden; border:1px solid var(--bark); }
+.img-wrap img{ width:100%; display:block; }
+.entry .img-ph, .entry .img-wrap{ margin-top:16px; max-width:420px; }
+.note .img-ph, .note .img-wrap{ margin-top:14px; max-width:420px; }
+
+/* friends lock + gallery */
+.lock{ max-width:420px; margin:50px auto 0; text-align:center; }
+.lock .ic{ width:48px; height:48px; color:var(--velvet); }
+.lock h1{ margin-top:14px; }
+.lock p{ color:var(--muted); margin-top:10px; line-height:1.6; }
+.lock input{ display:block; width:100%; margin:22px 0 12px; padding:14px 16px; background:var(--soil-2);
+  border:1px solid var(--bark); border-radius:12px; color:var(--cream); font-family:var(--body); font-size:16px; text-align:center; }
+.lock input:focus{ outline:none; border-color:var(--velvet); }
+.lock button{ width:100%; padding:13px; border:none; border-radius:12px; background:var(--velvet);
+  color:var(--cream); font-family:var(--display); font-weight:600; font-size:15px; cursor:pointer; }
+.lock button:hover{ background:var(--bloom-dk); }
+.lock .msg{ min-height:20px; margin-top:12px; color:var(--terracotta); font-size:14px; }
+.gallery{ display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:14px; margin-top:8px; }
+
+@media (max-width:600px){
+  .ring{ width:96vw; height:74vh; }
+  .bud{ width:62px; height:62px; }
+  .bud-link span{ font-size:12px; max-width:92px; }
+  .name .main{ font-size:clamp(44px,15vw,80px); }
+  .name .pre{ font-size:clamp(16px,4.6vw,24px); }
+  .page{ padding:32px 18px 90px; }
+}
+@media (prefers-reduced-motion:reduce){
+  *{ animation:none !important; }
+  .vine{ stroke-dashoffset:0; } .vleaf,.vbud{ opacity:.9; transform:none; }
+  .name{ -webkit-clip-path:none; clip-path:none; } .bud-link,.enter-hint{ opacity:1; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <radialGradient id="budVelvet" cx="50%" cy="35%" r="70%"><stop offset="0%" stop-color="#b85a4a"/><stop offset="100%" stop-color="var(--velvet)"/></radialGradient>
+  <radialGradient id="budClay" cx="50%" cy="35%" r="70%"><stop offset="0%" stop-color="var(--clay)"/><stop offset="100%" stop-color="var(--bloom-dk)"/></radialGradient>
+  <radialGradient id="discGrad" cx="50%" cy="40%" r="70%"><stop offset="0%" stop-color="#f3c777"/><stop offset="100%" stop-color="var(--gold)"/></radialGradient>
+</defs></svg>
+
+<!-- ============== HOME ============== -->
+<section id="home" class="view active">
+  <div class="garden anim">
+    <svg class="vines" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true"></svg>
+    <div class="ring">
+      <svg class="ring-vines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <!-- YOUR NAME -->
+      <div class="name"><span class="pre">my name is</span><span class="main">Haley</span></div>
+    </div>
+    <div class="enter-hint">pick a bloom</div>
+  </div>
+</section>
+
+<!-- ============== WRITING ============== -->
+<section id="writing" class="view">
+  <div class="topbar"><button class="back" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" fill="var(--gold)"/><g stroke="var(--velvet)" stroke-width="2"><path d="M12 3v5M12 16v5M3 12h5M16 12h5"/></g></svg> Back to the garden</button></div>
+  <div class="page">
+    <div class="kicker">the long form</div>
+    <h1>Writing</h1>
+    <p class="lead">Longer pieces on the things that matter. Politics, science, and the stories sitting underneath the headlines.</p>
+    <div id="writing-list"></div>
+  </div>
+</section>
+
+<!-- ============== WORLDLY OBSERVATIONS ============== -->
+<section id="observations" class="view">
+  <div class="topbar"><button class="back" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" fill="var(--gold)"/><g stroke="var(--velvet)" stroke-width="2"><path d="M12 3v5M12 16v5M3 12h5M16 12h5"/></g></svg> Back to the garden</button></div>
+  <div class="page">
+    <div class="kicker">from out in the world</div>
+    <h1>Worldly Observations</h1>
+    <p class="lead">Shorter notes. Strange things, local happenings, and whatever catches my eye while I'm out living.</p>
+    <svg class="sprout" viewBox="0 0 40 40" fill="none"><path d="M20 38 V18" stroke="var(--moss)" stroke-width="2.5" stroke-linecap="round"/><path d="M20 24 C8 22 6 12 8 8 C18 9 21 18 20 24Z" fill="var(--moss)"/><path d="M20 28 C32 26 34 18 32 14 C23 15 20 23 20 28Z" fill="var(--sage)"/></svg>
+    <div id="obs-list"></div>
+  </div>
+</section>
+
+<!-- ============== GET TO KNOW ME ============== -->
+<section id="gettoknow" class="view">
+  <div class="topbar"><button class="back" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" fill="var(--gold)"/><g stroke="var(--velvet)" stroke-width="2"><path d="M12 3v5M12 16v5M3 12h5M16 12h5"/></g></svg> Back to the garden</button></div>
+  <div class="page">
+    <h1>Get to Know Me</h1>
+    <svg class="sprout" viewBox="0 0 40 40" fill="none"><path d="M20 38 V18" stroke="var(--moss)" stroke-width="2.5" stroke-linecap="round"/><path d="M20 24 C8 22 6 12 8 8 C18 9 21 18 20 24Z" fill="var(--moss)"/><path d="M20 28 C32 26 34 18 32 14 C23 15 20 23 20 28Z" fill="var(--sage)"/></svg>
+    <div class="about-wrap">
+      <!-- portrait: drop a photo at images/haley.jpg -->
+      <div id="portrait"></div>
+      <div>
+        <!-- GET TO KNOW ME: rewrite freely in your own words -->
+        <p class="hi">hi, I'm Haley</p>
+        <p>I'm a writer who pays attention. I care about real things, like politics, science, and the small stuff happening right where I live.</p>
+        <p>Some of what I write is researched and serious. Some of it is just me noticing something and wanting to say it out loud. This site is my journal and my portfolio, all in one place.</p>
+        <p>If something here makes you think, I would love to hear about it.</p>
+        <div class="mail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--clay)" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+          <a href="mailto:haleyrameywriter@gmail.com">haleyrameywriter@gmail.com</a>
+        </div>
+        <div class="sig">Haley</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FRIENDS ONLY ============== -->
+<section id="friends" class="view">
+  <div class="topbar"><button class="back" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" fill="var(--gold)"/><g stroke="var(--velvet)" stroke-width="2"><path d="M12 3v5M12 16v5M3 12h5M16 12h5"/></g></svg> Back to the garden</button></div>
+  <div class="page">
+    <div class="lock" id="friends-lock">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>
+      <h1>Friends Only</h1>
+      <p>A little corner just for people I actually know. Got the password?</p>
+      <input id="pw" type="password" placeholder="password" onkeydown="if(event.key==='Enter')tryPw()" />
+      <button onclick="tryPw()">come on in</button>
+      <div class="msg" id="pw-msg"></div>
+    </div>
+    <div id="friends-content" hidden>
+      <div class="kicker">welcome in</div>
+      <h1>For My People</h1>
+      <p class="lead">Photos and bits I only share with friends.</p>
+      <div class="gallery" id="friends-gallery"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ============== generate a busy bed of vines ============== */
+(function(){
+  const svg = document.querySelector(".vines");
+  const NS="http://www.w3.org/2000/svg";
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  const cubic=(p,t)=>{const u=1-t;return{
+    x:u*u*u*p[0]+3*u*u*t*p[2]+3*u*t*t*p[4]+t*t*t*p[6],
+    y:u*u*u*p[1]+3*u*u*t*p[3]+3*u*t*t*p[5]+t*t*t*p[7]};};
+  let i=0;
+  function vine(p){            /* p = [x0,y0,c1x,c1y,c2x,c2y,ex,ey] */
+    const d=`M${p[0]},${p[1]} C ${p[2]},${p[3]} ${p[4]},${p[5]} ${p[6]},${p[7]}`;
+    const path=document.createElementNS(NS,"path");
+    path.setAttribute("class","vine "+["","v2","v3"][i%3]);
+    path.setAttribute("pathLength","1"); path.setAttribute("d",d);
+    const delay=rnd(0,1.0); path.style.animationDelay=delay.toFixed(2)+"s";
+    svg.appendChild(path);
+    [0.5,0.78,0.96].forEach((t,k)=>{               /* leaves along the vine */
+      const pt=cubic(p,t);
+      const lf=document.createElementNS(NS,"ellipse");
+      lf.setAttribute("class","vleaf "+["","s","d"][(i+k)%3]);
+      lf.setAttribute("cx",pt.x.toFixed(1)); lf.setAttribute("cy",pt.y.toFixed(1));
+      lf.setAttribute("rx",rnd(14,21).toFixed(1)); lf.setAttribute("ry",rnd(7,10).toFixed(1));
+      lf.setAttribute("transform",`rotate(${rnd(-70,70).toFixed(0)} ${pt.x.toFixed(1)} ${pt.y.toFixed(1)})`);
+      lf.style.animationDelay=(delay+0.9+t*0.5).toFixed(2)+"s";
+      svg.appendChild(lf);
+    });
+    if(Math.random()<0.45){                          /* a velvet bud at the tip */
+      const b=document.createElementNS(NS,"circle");
+      b.setAttribute("class","vbud"); b.setAttribute("cx",p[6]); b.setAttribute("cy",p[7]);
+      b.setAttribute("r",rnd(8,12).toFixed(1)); b.style.animationDelay=(delay+1.5).toFixed(2)+"s";
+      svg.appendChild(b);
+    }
+    i++;
+  }
+  const D=260;                                       /* how far vines reach inward */
+  for(let k=0;k<7;k++){ const x=rnd(40,960);          /* top edge */
+    vine([x,-20, x+rnd(-70,70),rnd(60,120), x+rnd(-130,130),rnd(150,210), x+rnd(-180,180),rnd(120,D)]); }
+  for(let k=0;k<7;k++){ const x=rnd(40,960);          /* bottom edge */
+    vine([x,1020, x+rnd(-70,70),rnd(880,940), x+rnd(-130,130),rnd(790,850), x+rnd(-180,180),rnd(1000-D,880)]); }
+  for(let k=0;k<5;k++){ const y=rnd(60,940);          /* left edge */
+    vine([-20,y, rnd(60,120),y+rnd(-70,70), rnd(150,210),y+rnd(-130,130), rnd(120,D),y+rnd(-180,180)]); }
+  for(let k=0;k<5;k++){ const y=rnd(60,940);          /* right edge */
+    vine([1020,y, rnd(880,940),y+rnd(-70,70), rnd(790,850),y+rnd(-130,130), rnd(1000-D,880),y+rnd(-180,180)]); }
+
+  function spiral(cx,cy,r0,turns,a0,dir){            /* curling tendril that spirals inward */
+    let d="M"; const steps=46;
+    for(let s=0;s<=steps;s++){ const t=s/steps; const r=r0*(1-t*0.9);
+      const ang=a0+dir*turns*2*Math.PI*t; const x=cx+Math.cos(ang)*r, y=cy+Math.sin(ang)*r;
+      d+=(s?` L`:``)+`${x.toFixed(1)},${y.toFixed(1)}`; }
+    const path=document.createElementNS(NS,"path");
+    path.setAttribute("class","vine "+["","v2","v3"][i%3]);
+    path.setAttribute("pathLength","1"); path.setAttribute("d",d);
+    const delay=rnd(0,1.0); path.style.animationDelay=delay.toFixed(2)+"s"; svg.appendChild(path);
+    [0.28,0.58].forEach(t=>{ const r=r0*(1-t*0.9); const ang=a0+dir*turns*2*Math.PI*t;
+      const x=cx+Math.cos(ang)*r, y=cy+Math.sin(ang)*r;
+      const lf=document.createElementNS(NS,"ellipse"); lf.setAttribute("class","vleaf "+["s","d"][i%2]);
+      lf.setAttribute("cx",x.toFixed(1)); lf.setAttribute("cy",y.toFixed(1));
+      lf.setAttribute("rx",rnd(12,18).toFixed(1)); lf.setAttribute("ry",rnd(6,9).toFixed(1));
+      lf.setAttribute("transform",`rotate(${(ang*180/Math.PI).toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})`);
+      lf.style.animationDelay=(delay+0.9+t).toFixed(2)+"s"; svg.appendChild(lf); });
+    const b=document.createElementNS(NS,"circle"); b.setAttribute("class","vbud");
+    b.setAttribute("cx",cx.toFixed(1)); b.setAttribute("cy",cy.toFixed(1));
+    b.setAttribute("r",rnd(8,12).toFixed(1)); b.style.animationDelay=(delay+1.4).toFixed(2)+"s"; svg.appendChild(b);
+    i++;
+  }
+  spiral(165,165,155,2.3,Math.PI,1);   spiral(835,165,155,2.3,0,-1);
+  spiral(165,835,155,2.3,-Math.PI/2,-1); spiral(835,835,155,2.3,Math.PI/2,1);
+  spiral(120,500,115,2.1,0,1);          spiral(880,500,115,2.1,Math.PI,-1);
+})();
+
+/* ============== YOUR NAV FLOWERS ============== */
+const NAV = [
+  { label:"Writing",             id:"writing",      tone:"clay",   top:14, left:19 },
+  { label:"Worldly Observations",id:"observations", tone:"velvet", top:14, left:81 },
+  { label:"Get to Know Me",      id:"gettoknow",    tone:"clay",   top:86, left:21 },
+  { label:"Friends Only",        id:"friends",      tone:"velvet", top:86, left:79, locked:true }
+];
+function budSVG(tone){
+  const fill = tone==="clay" ? "url(#budClay)" : "url(#budVelvet)";
+  let petals=""; for(let a=0;a<360;a+=72){ petals+=`<ellipse cx="50" cy="27" rx="13" ry="21" fill="${fill}" transform="rotate(${a} 50 50)"/>`; }
+  return `<svg class="bud" viewBox="0 0 100 100">${petals}<circle cx="50" cy="50" r="12" fill="url(#discGrad)"/></svg>`;
+}
+const lockSVG = `<span class="lock-badge"><svg viewBox="0 0 24 24" fill="none" stroke="var(--velvet)" stroke-width="2.4"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></span>`;
+const ring=document.querySelector(".ring");
+const ringVines=document.querySelector(".ring-vines");
+const SVGNS="http://www.w3.org/2000/svg";
+NAV.forEach((n,idx)=>{
+  /* a stem curling out from the nearest corner to the bloom */
+  const cx=n.left<50?-4:104, cy=n.top<50?-4:104;
+  const dx=n.left-cx, dy=n.top-cy, len=Math.hypot(dx,dy)||1, px=-dy/len, py=dx/len, amp=10;
+  const c1x=cx+dx*0.4+px*amp, c1y=cy+dy*0.4+py*amp;
+  const c2x=cx+dx*0.75-px*amp, c2y=cy+dy*0.75-py*amp;
+  const stem=document.createElementNS(SVGNS,"path");
+  stem.setAttribute("class","stem"); stem.setAttribute("pathLength","1");
+  stem.setAttribute("d",`M${cx},${cy} C ${c1x.toFixed(1)},${c1y.toFixed(1)} ${c2x.toFixed(1)},${c2y.toFixed(1)} ${n.left},${n.top}`);
+  stem.style.animationDelay=(2.3+idx*0.18)+"s"; ringVines.appendChild(stem);
+  const mx=cx+dx*0.55, my=cy+dy*0.55;
+  const lf=document.createElementNS(SVGNS,"ellipse"); lf.setAttribute("class","stem-leaf");
+  lf.setAttribute("cx",mx.toFixed(1)); lf.setAttribute("cy",my.toFixed(1));
+  lf.setAttribute("rx","3.4"); lf.setAttribute("ry","1.8");
+  lf.setAttribute("transform",`rotate(${(Math.atan2(dy,dx)*180/Math.PI).toFixed(0)} ${mx.toFixed(1)} ${my.toFixed(1)})`);
+  lf.style.animationDelay=(2.9+idx*0.18)+"s"; ringVines.appendChild(lf);
+
+  const b=document.createElement("button"); b.className="bud-link";
+  b.style.top=n.top+"%"; b.style.left=n.left+"%"; b.style.animationDelay=(2.8+idx*0.18)+"s";
+  b.innerHTML=`<span class="bud-wrap">${budSVG(n.tone)}${n.locked?lockSVG:""}</span><span>${n.label}</span>`;
+  b.onclick=()=>popScatter(b,n.tone,()=>go(n.id));
+  ring.appendChild(b);
+});
+
+/* pop + scatter when a bloom is picked */
+function popScatter(btn,tone,cb){
+  const r=btn.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+  const color=tone==="clay"?"#d8a05f":"#7d2a2d";
+  for(let i=0;i<14;i++){
+    const el=document.createElement("div"); el.className="petal-particle";
+    el.style.left=cx+"px"; el.style.top=cy+"px"; el.style.background=color;
+    document.body.appendChild(el);
+    const ang=(i/14)*Math.PI*2+Math.random()*0.4, dist=55+Math.random()*70;
+    el.animate([{transform:"translate(-50%,-50%) rotate(0deg) scale(1)",opacity:1},
+      {transform:`translate(calc(-50% + ${Math.cos(ang)*dist}px), calc(-50% + ${Math.sin(ang)*dist}px)) rotate(${(Math.random()*360)|0}deg) scale(.3)`,opacity:0}],
+      {duration:560,easing:"cubic-bezier(.2,.7,.2,1)"}).onfinish=()=>el.remove();
+  }
+  const bud=btn.querySelector(".bud");
+  bud.animate([{transform:"scale(1)"},{transform:"scale(1.35)",offset:.3},{transform:"scale(.2)",opacity:0},{transform:"scale(1)",opacity:1}],{duration:600,easing:"ease"});
+  setTimeout(cb,430);
+}
+
+/* ============== YOUR WRITING  (copy a { } block to add a post) ============== */
+const posts = [
+  { date:"June 2, 2026", tag:"Politics", title:"The headline you read and the thing that actually happened",
+    excerpt:"A look at how a local zoning fight became a national talking point, and what got lost in between.", img:"", link:"#" },
+  { date:"May 24, 2026", tag:"Science", title:"What the soil already knew",
+    excerpt:"Notes on the research quietly reshaping how we think about ecosystems, written for people who do not have a lab.", img:"", link:"#" },
+  { date:"May 10, 2026", tag:"Essay", title:"On paying attention",
+    excerpt:"Why I started writing things down in the first place.", img:"", link:"#" }
+];
+/* ============== WORLDLY OBSERVATIONS (shorter notes) ============== */
+const obs = [
+  { date:"add a date", tag:"add a tag", title:"Place content here",
+    excerpt:"Place your observation here. Write whatever you noticed, big or small.", img:"" },
+  { date:"add a date", tag:"add a tag", title:"Place content here",
+    excerpt:"Place your observation here. Write whatever you noticed, big or small.", img:"" },
+  { date:"add a date", tag:"add a tag", title:"Place content here",
+    excerpt:"Place your observation here. Write whatever you noticed, big or small.", img:"" }
+];
+
+function imgArea(src,hint){
+  if(src) return `<div class="img-wrap"><img src="${src}" alt=""></div>`;
+  return `<div class="img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="M21 16l-5-5L5 20"/></svg><span>add a photo here</span><code>${hint}</code></div>`;
+}
+function renderWriting(){
+  document.getElementById("writing-list").innerHTML = posts.map((p,i)=>`
+    <article class="entry">
+      <div class="entry-no">${String(i+1).padStart(2,"0")}</div>
+      <div>
+        <div class="entry-kicker">${p.date} <b>&middot; ${p.tag}</b></div>
+        <h2>${p.title}</h2>
+        ${imgArea(p.img, "images/post-"+(i+1)+".jpg")}
+        <p>${p.excerpt}</p>
+        <a class="more" href="${p.link}">Read on &rarr;</a>
+      </div>
+    </article>`).join("");
+}
+function renderObs(){
+  document.getElementById("obs-list").innerHTML = obs.map((o,i)=>`
+    <div class="note">
+      <div class="note-date">${o.date} <b>${o.tag}</b></div>
+      <h3>${o.title}</h3><p>${o.excerpt}</p>
+      ${imgArea(o.img, "images/observation-"+(i+1)+".jpg")}
+    </div>`).join("");
+}
+renderWriting(); renderObs();
+document.getElementById("portrait").innerHTML = imgArea("", "images/haley.jpg");
+
+/* ============== FRIENDS gallery + password ============== */
+/* FRIENDS PASSWORD — change this word. NOTE: this is light protection only,
+   it keeps casual visitors out but is not true security. */
+const FRIENDS_PASSWORD = "sunflower";
+const friendsPhotos = ["images/friends-1.jpg","images/friends-2.jpg","images/friends-3.jpg",
+                       "images/friends-4.jpg","images/friends-5.jpg","images/friends-6.jpg"];
+function buildGallery(){
+  document.getElementById("friends-gallery").innerHTML =
+    friendsPhotos.map(src=>imgArea("",src)).join("");
+}
+function tryPw(){
+  const val=document.getElementById("pw").value.trim().toLowerCase();
+  if(val===FRIENDS_PASSWORD.toLowerCase()){
+    document.getElementById("friends-lock").hidden=true;
+    document.getElementById("friends-content").hidden=false;
+    buildGallery();
+  } else {
+    document.getElementById("pw-msg").textContent="Hmm, that's not it. Try again.";
+  }
+}
+
+/* ============== navigation ============== */
+const garden=document.querySelector(".garden");
+function go(id){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo(0,0);
+  history.replaceState(null,"", id==="home"?"#":"#"+id);
+  if(id==="home"){ garden.classList.remove("anim"); void garden.offsetWidth; garden.classList.add("anim"); }
+}
+window.addEventListener("DOMContentLoaded",()=>{
+  const h=location.hash.replace("#","");
+  if(h&&document.getElementById(h)) go(h);
+});
+</script>
+</body>
+</html>
